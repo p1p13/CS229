@@ -28,8 +28,6 @@ for i = 1:m
 		distance(i, j) = norm(train_right(i, :) - train_right(j, :)) ^ 2;
 	end
 end
-distance = distance / max(distance(:));
-
 f_left = zeros(m, 50);
 k = 3;
 
@@ -37,7 +35,7 @@ for i = 1:m
 	[sorted_distance, indices] = sort(distance(:,i), 1, 'ascend');
 	k_neighbours = ones(m,1);
 	k_neighbours(indices(k+1:end)) = 0;
-	kernel = max(1 - distance(:, i), 0);
+	kernel = max(1 - distance(:, i) / max(distance(:, i)), 0);
 	kernel = kernel .* k_neighbours;
 	f_left(i, :) = train_left' * kernel / sum(kernel);
 end
@@ -45,4 +43,38 @@ end
 % training error
 training_error = sum((train_left(:) - f_left(:)) .^ 2);
 training_error /= m;
-fprintf(1, 'Average trainign error: %1.4f\n', training_error);
+fprintf(1, 'Average training error: %1.4f\n', training_error);
+
+
+% test_data
+test_distance = zeros(m, m2);
+for i = 1:m
+	for j = 1 : m2
+		test_distance(i, j) = norm(train_right(i, :) - test_right(j, :)) ^ 2;
+	end
+end
+ftest_left = zeros(m2, 50);
+for i = 1:m2
+	[sorted_distance, indices] = sort(test_distance(:,i), 1, 'ascend');
+	k_neighbours = ones(m,1);
+	k_neighbours(indices(k+1:end)) = 0;
+	kernel = max(1 - test_distance(:, i) / max(test_distance(:, i)), 0);
+	kernel = kernel .* k_neighbours;
+	ftest_left(i, :) = train_left' * kernel / sum(kernel);
+end
+
+%test_error
+test_error = sum((test_left(:) - ftest_left(:)) .^ 2);
+test_error /= m2;
+fprintf(1, 'Average test error: %1.4f\n', test_error);
+
+
+figure;
+plot(lambdas, test_qso(1, :), 'k+', 'linewidth', 1);
+hold on;
+plot(lambdas(1:50), ftest_left(1, :), 'r+', 'linewidth', 2);
+
+figure;
+plot(lambdas, test_qso(6, :), 'k+', 'linewidth', 1);
+hold on;
+plot(lambdas(1:50), ftest_left(6, :), 'r+', 'linewidth', 2);
