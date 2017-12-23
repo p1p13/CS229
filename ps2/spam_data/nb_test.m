@@ -21,6 +21,14 @@ output = zeros(numTestDocs, 1);
 
 %---------------
 % YOUR CODE HERE
+for k = 1:numTestDocs
+	[i, j, v] = find(testMatrix(k,:));
+	non_spam_posterior_log = sum(v .* non_spam_phi_log(j)) + non_spam_prior_log;
+	spam_posterior_log = sum(v .* spam_phi_log(j)) + spam_prior_log;
+	if(non_spam_posterior_log < spam_posterior_log)
+		output(k) = 1;
+	end
+end
 
 
 %---------------

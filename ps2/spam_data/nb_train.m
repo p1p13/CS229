@@ -32,6 +32,6 @@ non_spam_prior_log = log(size(non_spam, 1) / numTrainDocs);
 spam_prior_log = log(size(spam, 1) / numTrainDocs);
 
 for k=1:V
-	non_spam_phi_log = log((sum(non_spam(:, k) + 1) / (sum(sum(non_spam)) + V));
-	spam_phi_log = log((sum(spam(:, k) + 1) / (sum(sum(spam)) + V));
+	non_spam_phi_log(k) = log((sum(non_spam(:, k)) + 1) / (sum(sum(non_spam)) + V));
+	spam_phi_log(k) = log((sum(spam(:, k)) + 1) / (sum(sum(spam)) + V));
 end
