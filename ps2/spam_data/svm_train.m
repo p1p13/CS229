@@ -33,6 +33,25 @@ average_alpha = zeros(numTrainDocs, 1);
 
 %---------------
 % YOUR CODE HERE
+Z = sum(Xtrain .^ 2, 2); 
+tau = 8;
+K = full(exp(-(repmat(Z, 1, numTrainDocs) + repmat(Z', numTrainDocs, 1) - 2 * Xtrain * Xtrain' ) / (2 * tau ^ 2)));
+
+lambda = 1 / (64 * numTrainDocs);
+itr = 40;
+alpha = zeros(numTrainDocs, 1);
+step =1;
+
+for i = 1:numTrainDocs * itr
+	index = ceil(rand * numTrainDocs);
+	margin = ytrain(index) * K(index, :) * alpha;
+	diff = -(margin < 1) * ytrain(index) * K(:, index);
+	diff += numTrainDocs * lambda * (K(:, index) * alpha(index));
+	alpha = alpha - diff / sqrt(step);
+	average_alpha = alpha + average_alpha;
+	step++;
+end
+average_alpha = average_alpha / (numTrainDocs * itr);
 
 
 %---------------

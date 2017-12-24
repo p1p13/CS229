@@ -28,7 +28,9 @@ predictions = zeros(numTestDocs, 1);
 
 %---------------
 % YOUR CODE HERE
-
+Z_test = sum(Xtest .^ 2, 2); 
+K_test = full(exp(-(repmat(Z_test, 1, numTrainDocs) + repmat(Z', numTestDocs, 1) - 2 * Xtest * Xtrain' ) / (2 * tau ^ 2)));
+predictions = K_test * average_alpha;
 
 
 %---------------
