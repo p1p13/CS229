@@ -34,12 +34,15 @@ for iter = 1:T
   feature_inds = [feature_inds; ind];
   thresholds = [thresholds; thresh];
   % ------- You should implement your code here -------- %
+  w_plus = p_dist' * (sign(X(:, ind) - thresh) == y);
+  w_minus = p_dist' * (sign(X(:, ind) - thresh) ~= y);
 
 
-
-  newest_theta_param = 0;  % Change this line so that newest_theta_param takes
+  newest_theta_param = 0.5 * log(w_plus / w_minus);  % Change this line so that newest_theta_param takes
                            % the optimal weight for the new decision stump.
 
   % ------- No need to change this part ------- %
   theta = [theta; newest_theta_param];
+  p_dist = exp(y .* (sign(X(:, feature_inds) - repmat(thresholds', mm, 1)) * theta));
+  p_dist = p_dist / sum(p_dist);
 end
