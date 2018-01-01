@@ -25,10 +25,11 @@ for iter = 1:T
   thresh = X(ceil(rand * mm), ind) + 1e-8 * randn;
 
   % ---- Your code here ----- %
+  w_plus = p_dist' * (sign(X(:, ind) - thresh) == y);
+  w_minus = p_dist' * (sign(X(:, ind) - thresh) ~= y);
 
-  
 
-  new_theta = 0;  % Modify this to use the optimal weight for the newest
+  new_theta = 0.5 * log(w_plus / w_minus); % Modify this to use the optimal weight for the newest
                   % decision stump.
   
   % ---- No need to touch this ---- %
@@ -39,4 +40,6 @@ for iter = 1:T
     sign(X(:, feature_inds) - repmat(thresholds', mm, 1)) * theta));
   fprintf(1, 'Iter %d, empirical risk = %1.4f, empirical error = %1.4f\n', ...
           iter, sum(losses_per_example), sum(losses_per_example >= 1));
+  p_dist = exp(y .* (sign(X(:, feature_inds) - repmat(thresholds', mm, 1)) * theta));
+  p_dist = p_dist / sum(p_dist);
 end
